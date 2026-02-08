@@ -1,0 +1,287 @@
+:root {
+  --background: '#0F0F0F';
+  --text: '#F5F3EE';
+  --neutral: '#B8B8B2';
+  --neutralLight: '#EDEBE6';
+  --accentRed: '#8B1E1E';
+  --accentBlue: '#4A5D73';
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0F0F0F;
+}
+::-webkit-scrollbar-thumb {
+  background: #4A5D73;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #EDEBE6;
+}
+
+/* Animations */
+.reveal-content {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal-content.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.filter-btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  border: 1px solid #B8B8B2;
+  color: #B8B8B2;
+  transition: all 0.3s ease;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.filter-btn.active,
+.filter-btn:hover {
+  background: #F5F3EE;
+  color: #0F0F0F;
+  border-color: #F5F3EE;
+}
+
+/* Video container styles */
+.video-container {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.video-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal styles */
+#video-modal {
+  z-index: 100;
+}
+
+#video-modal video {
+  max-height: 80vh;
+}
+
+/* Grid layout adjustments */
+.work-item {
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.work-item.hidden {
+  opacity: 0;
+  transform: scale(0.95);
+  display: none;
+}
+
+/* WHITE GLOWING PROFILE PICTURE EFFECT */
+.profile-glow {
+  position: relative;
+  border-radius: 50%;
+  padding: 5px;
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.3) 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.3) 75%,
+    rgba(255, 255, 255, 0.4) 100%
+  );
+  animation: glow-pulse 3s ease-in-out infinite;
+  box-shadow:
+    0 0 20px rgba(255, 255, 255, 0.3),
+    0 0 40px rgba(255, 255, 255, 0.2),
+    0 0 60px rgba(255, 255, 255, 0.1),
+    inset 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.profile-glow-inner {
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.1);
+  width: 100%;
+  height: 100%;
+}
+
+/* For smaller profile pictures */
+.profile-glow-sm {
+  padding: 3px;
+  box-shadow:
+    0 0 15px rgba(255, 255, 255, 0.25),
+    0 0 30px rgba(255, 255, 255, 0.15),
+    0 0 45px rgba(255, 255, 255, 0.1),
+    inset 0 0 15px rgba(255, 255, 255, 0.15);
+}
+
+@keyframes glow-pulse {
+  0%, 100% {
+    background: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.4) 0%,
+      rgba(255, 255, 255, 0.3) 25%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.3) 75%,
+      rgba(255, 255, 255, 0.4) 100%
+    );
+    box-shadow:
+      0 0 20px rgba(255, 255, 255, 0.3),
+      0 0 40px rgba(255, 255, 255, 0.2),
+      0 0 60px rgba(255, 255, 255, 0.1),
+      inset 0 0 20px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    background: linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.5) 0%,
+      rgba(255, 255, 255, 0.4) 25%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0.4) 75%,
+      rgba(255, 255, 255, 0.5) 100%
+    );
+    box-shadow:
+      0 0 25px rgba(255, 255, 255, 0.4),
+      0 0 50px rgba(255, 255, 255, 0.3),
+      0 0 75px rgba(255, 255, 255, 0.2),
+      inset 0 0 25px rgba(255, 255, 255, 0.3);
+  }
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Gradient text effect */
+.gradient-text {
+  background: linear-gradient(45deg, #F5F3EE, #EDEBE6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Profile image hover effect */
+#profile-pic {
+  transition: transform 0.5s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-glow:hover #profile-pic {
+  transform: scale(1.05);
+}
+
+/* TikTok coming soon badge */
+.coming-soon-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: linear-gradient(45deg, #69C9D0, #EE1D52);
+  color: white;
+  font-size: 10px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 12px;
+  animation: pulse 2s infinite;
+}
+
+/* Video hover states */
+.video-container:hover video {
+  filter: grayscale(0) brightness(1.1);
+}
+
+/* Click instruction */
+.click-instruction {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.video-container:hover .click-instruction {
+  opacity: 1;
+}
+
+/* Coming soon animation */
+@keyframes coming-soon-pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.coming-soon {
+  animation: coming-soon-pulse 2s infinite;
+}
+
+/* Modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(10px);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .profile-glow {
+    padding: 4px;
+    box-shadow:
+      0 0 15px rgba(255, 255, 255, 0.25),
+      0 0 30px rgba(255, 255, 255, 0.15),
+      0 0 45px rgba(255, 255, 255, 0.1),
+      inset 0 0 15px rgba(255, 255, 255, 0.15);
+  }
+  
+  .profile-glow-sm {
+    padding: 2px;
+  }
+  
+  #video-modal {
+    padding: 10px;
+  }
+  
+  #video-modal video {
+    max-height: 60vh;
+  }
+}
+
+/* Fix for any overflow issues */
+* {
+  box-sizing: border-box;
+}
+
+/* Smooth image loading */
+img {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+/* Selection color */
+::selection {
+  background-color: #4A5D73;
+  color: #F5F3EE;
+}
+
+::-moz-selection {
+  background-color: #4A5D73;
+  color: #F5F3EE;
+}

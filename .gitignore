@@ -1,0 +1,14 @@
+﻿# Ignore all video files
+Videos/
+*.mp4
+*.mov
+*.MP4
+*.MOV
+*.avi
+*.mkv
+video-editor-portfolio.zip
+
+# System files
+.DS_Store
+Thumbs.db
+*.log

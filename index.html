@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thamara Perera | Video Editor Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: '#0F0F0F',
+                        text: '#F5F3EE',
+                        neutral: '#B8B8B2',
+                        neutralLight: '#EDEBE6',
+                        accentRed: '#8B1E1E',
+                        accentBlue: '#4A5D73',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
+                        'modal-in': 'modalIn 0.3s ease-out',
+                        'modal-out': 'modalOut 0.3s ease-in',
+                        'glow-pulse': 'glow-pulse 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        'float': {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: 0.6 },
+                            '50%': { opacity: 1 },
+                        },
+                        'modalIn': {
+                            '0%': { opacity: 0, transform: 'scale(0.9) translateY(20px)' },
+                            '100%': { opacity: 1, transform: 'scale(1) translateY(0)' },
+                        },
+                        'modalOut': {
+                            '0%': { opacity: 1, transform: 'scale(1) translateY(0)' },
+                            '100%': { opacity: 0, transform: 'scale(0.9) translateY(20px)' },
+                        },
+                        'glow-pulse': {
+                            '0%, 100%': { 
+                                boxShadow: '0 0 20px rgba(255, 255, 255, 0.2), 0 0 40px rgba(255, 255, 255, 0.1), 0 0 60px rgba(255, 255, 255, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.1)' 
+                            },
+                            '50%': { 
+                                boxShadow: '0 0 30px rgba(255, 255, 255, 0.3), 0 0 50px rgba(255, 255, 255, 0.2), 0 0 70px rgba(255, 255, 255, 0.1), inset 0 0 25px rgba(255, 255, 255, 0.15)' 
+                            },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* TikTok icon color */
+        .fa-tiktok {
+            background: linear-gradient(45deg, #69C9D0, #EE1D52, #000000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-background text-text font-inter selection:bg-accentBlue selection:text-white overflow-x-hidden">
+
+    <!-- Cursor Glow -->
+    <div id="cursor-glow" class="hidden md:block fixed pointer-events-none z-50 w-96 h-96 bg-accentBlue/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 transition-opacity duration-300 opacity-0"></div>
+
+    <!-- Video Modal -->
+    <div id="video-modal" class="fixed inset-0 bg-black/95 z-[100] hidden items-center justify-center p-4">
+        <div class="relative w-full max-w-6xl mx-auto animate-modal-in">
+            <button id="close-modal" class="absolute -top-12 right-0 text-white text-2xl hover:text-neutralLight transition-colors z-10 bg-black/50 rounded-full w-10 h-10 flex items-center justify-center">
+                <i class="fas fa-times"></i>
+            </button>
+            <button id="close-modal-2" class="absolute -bottom-12 left-1/2 -translate-x-1/2 text-white text-sm hover:text-neutralLight transition-colors bg-accentBlue/30 px-6 py-2 rounded-full">
+                Close Video
+            </button>
+            <div class="aspect-video bg-black rounded-2xl overflow-hidden shadow-2xl">
+                <video id="modal-video" controls class="w-full h-full" preload="metadata">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div id="video-info" class="mt-4 text-center">
+                <h3 id="video-title" class="text-text text-xl font-bold"></h3>
+                <p id="video-category" class="text-neutral text-sm mt-1"></p>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed top-0 left-0 w-full z-40 p-6 md:p-10 flex justify-between items-center">
+        <a href="#" class="text-text font-bold tracking-tighter text-xl hover:text-neutralLight transition-colors">TP.</a>
+        <div class="hidden md:flex space-x-8 text-sm uppercase tracking-widest font-medium">
+            <a href="#about" class="text-neutral hover:text-text transition-colors">About</a>
+            <a href="#work" class="text-neutral hover:text-text transition-colors">Work</a>
+            <a href="#contact" class="text-neutral hover:text-text transition-colors">Contact</a>
+        </div>
+        <a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2Ftheheaviess%3Ffbclid%3DIwZXh0bgNhZW0CMTAAYnJpZBExY3NYOHJxQ3hESlBGZ0RDSHNydGMGYXBwX2lkEDIyMjAzOTE3ODgyMDA4OTIAAR7MzmncV5LtPHoWo4akuuTyJUNYNGCXIKTU0ptN3Mj_NhOT7UaLE-EPm2ISVg_aem_zDtCAub80hUtkrImY-6m8Q&h=AT03FvoOsZafoZoR29c-1v2JNRcMPrGXOEid0fP4_MnYt2a2tmPXOc7OjywA3bdZGjGtFoC24D5Aw6S4wZ6RrylbZWb-MOT8i54bE-bB_6nlUziClgqdfXbimwGVoT9SBs_B-REkL-umilP71v_G" target="_blank" class="text-xs border border-accentBlue/30 px-4 py-2 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-accentBlue/10 hover:scale-105 transition-all text-text">THE HEAVIES</a>
+    </nav>
+
+    <main class="relative">
+        
+        <!-- Hero Section with Profile Picture -->
+        <section class="min-h-screen flex flex-col md:flex-row items-center justify-between px-6 md:px-24 py-20 relative overflow-hidden">
+            <div class="reveal-content md:w-1/2 mb-12 md:mb-0">
+                <div class="flex items-center space-x-4 mb-8">
+                    <!-- Small Profile Picture with White Glow -->
+                    <div class="profile-glow profile-glow-sm w-20 h-20 rounded-full">
+                        <div class="profile-glow-inner w-full h-full">
+                            <img src="image.png" alt="Thamara Perera" class="w-full h-full object-cover" id="profile-pic">
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-sm uppercase tracking-[0.3em] text-neutral mb-1">Video Editor</h2>
+                        <h3 class="text-text text-xl font-bold">Thamara Perera</h3>
+                    </div>
+                </div>
+                
+                <h1 class="text-[clamp(3rem,10vw,6rem)] font-black text-text leading-[0.9] tracking-tighter mb-6">
+                    CINEMATIC <br> STORYTELLER
+                </h1>
+                <p class="text-xl md:text-2xl font-light text-neutral max-w-xl mb-10 leading-relaxed">
+                    Crafting <span class="font-semibold text-neutralLight">high-impact</span> cinematic edits that keep viewers hooked from the first second.
+                </p>
+                <div class="flex space-x-4">
+                    <a href="#work" class="bg-text text-background px-8 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:scale-105 transition-transform hover:bg-neutralLight">View Showreel</a>
+                    <a href="#contact" class="border border-accentBlue/30 text-text px-8 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:bg-accentBlue/10 transition-all">Hire Me</a>
+                </div>
+            </div>
+            
+            <!-- Right side with larger profile picture -->
+            <div class="md:w-1/2 relative flex justify-center">
+                <!-- Large Profile Picture with White Glow -->
+                <div class="profile-glow w-80 h-80 md:w-[500px] md:h-[500px]">
+                    <div class="profile-glow-inner w-full h-full">
+                        <img src="image.png" alt="Thamara Perera" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                
+                <!-- Floating elements -->
+                <div class="absolute -bottom-10 -left-10 w-40 h-40 border border-accentBlue/20 rounded-2xl rotate-12"></div>
+                <div class="absolute -top-10 -right-10 w-32 h-32 border border-accentBlue/20 rounded-full"></div>
+            </div>
+            
+            <!-- Scroll indicator -->
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+                <div class="w-6 h-10 border-2 border-neutral/30 rounded-full flex justify-center">
+                    <div class="w-1 h-3 bg-neutral rounded-full mt-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="px-6 md:px-24 py-32 border-t border-neutral/10">
+            <div class="grid md:grid-cols-2 gap-16 items-start">
+                <div class="sticky top-32">
+                    <h2 class="text-sm uppercase tracking-[0.3em] text-neutral mb-4">About Me</h2>
+                    <h3 class="text-4xl font-bold text-text tracking-tight mb-6">Professional Video Editor & Content Creator</h3>
+                    <div class="w-48 h-1 bg-gradient-to-r from-text to-neutral/20 mb-8"></div>
+                    <p class="text-neutral text-lg">
+                        With a passion for visual storytelling and a keen eye for detail, I transform raw footage into engaging narratives that captivate audiences.
+                    </p>
+                </div>
+                <div class="space-y-8 text-lg leading-relaxed text-neutral reveal-content">
+                    <p>
+                        Hi, I'm Thamara Perera, a passionate video editor specializing in creating engaging, high-impact content for social media and digital platforms.
+                    </p>
+                    <p>
+                        I focus on crafting visually compelling edits that capture attention, tell a story, and keep viewers hooked. My work includes everything from <span class="font-semibold text-neutralLight">fast-paced TikTok edits</span> to cinematic promotional content.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-4 pt-8">
+                        <div class="border border-neutral/10 p-6 rounded-2xl hover:border-accentBlue/30 transition-colors group bg-background">
+                            <div class="w-12 h-12 rounded-full bg-neutral/10 flex items-center justify-center mb-4 group-hover:bg-accentBlue/20 transition-colors">
+                                <i class="fas fa-mobile-alt text-neutral group-hover:text-text text-xl"></i>
+                            </div>
+                            <span class="block text-text font-bold text-2xl mb-2">Short-form</span>
+                            <span class="text-sm text-neutral">TikTok, Reels, Shorts</span>
+                        </div>
+                        <div class="border border-neutral/10 p-6 rounded-2xl hover:border-accentBlue/30 transition-colors group bg-background">
+                            <div class="w-12 h-12 rounded-full bg-neutral/10 flex items-center justify-center mb-4 group-hover:bg-accentBlue/20 transition-colors">
+                                <i class="fas fa-sliders-h text-neutral group-hover:text-text text-xl"></i>
+                            </div>
+                            <span class="block text-text font-bold text-2xl mb-2">Technical</span>
+                            <span class="text-sm text-neutral">Grading, Motion, Sound Design</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-4 pt-8 border-t border-neutral/10">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-text mb-2">60+</div>
+                            <div class="text-sm text-neutral">Projects</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-text mb-2">3M+</div>
+                            <div class="text-sm text-neutral">Views</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-text mb-2">100%</div>
+                            <div class="text-sm text-neutral">Client Satisfaction</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Work Section -->
+        <section id="work" class="px-6 md:px-24 py-32 bg-black/30">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16">
+                <div>
+                    <h2 class="text-sm uppercase tracking-[0.3em] text-neutral mb-4">Selected Work</h2>
+                    <h3 class="text-5xl md:text-6xl font-black text-text tracking-tighter">PROJECTS.</h3>
+                </div>
+                <div class="mt-6 md:mt-0 flex flex-wrap gap-2 text-xs uppercase tracking-widest">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="viral">Viral Edits</button>
+                    <button class="filter-btn" data-filter="client">Client Work</button>
+                    <button class="filter-btn" data-filter="promo">Promos</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="portfolio-grid">
+                <!-- Viral Edits -->
+                <div class="work-item group" data-category="viral">
+                    <div class="aspect-square bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Tiktok viral edit 1.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Viral Edit</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Viral Edit</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item group" data-category="viral">
+                    <div class="aspect-square bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Tiktok viral edit 2.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Viral Edit</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Viral Edit</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item group" data-category="viral">
+                    <div class="aspect-square bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Tiktok viral edit 3.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Viral Edit</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Viral Edit</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item group" data-category="viral">
+                    <div class="aspect-square bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Tiktok viral edit 4.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Viral Edit</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Viral Edit</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Client Videos (Existing) -->
+                <div class="work-item group" data-category="client">
+                    <div class="aspect-[9/16] bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Client - piyath 1st video.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Client Work</span>
+                            <h4 class="text-3xl font-bold text-text tracking-tight">Client Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item group" data-category="client">
+                    <div class="aspect-[9/16] bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Client - piyath 2nd video.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Client Work</span>
+                            <h4 class="text-3xl font-bold text-text tracking-tight">Client Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Client Video: OG.mov - Square (4:4) -->
+                <div class="work-item group" data-category="client">
+                    <div class="aspect-square bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/OG.mov" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Client Work</span>
+                            <h4 class="text-3xl font-bold text-text tracking-tight">Client Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Client Video: 2.mov - Square (4:4) -->
+                <div class="work-item group" data-category="client">
+                    <div class="aspect-square bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/2.mov" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Client Work</span>
+                            <h4 class="text-3xl font-bold text-text tracking-tight">Client Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cashcow Videos -->
+                <div class="work-item group" data-category="client">
+                    <div class="aspect-[9/16] bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Cashcow 1.mov">
+                            <source src="Videos/Cashcow 1.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Cashcow</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Cashcow Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item group" data-category="client">
+                    <div class="aspect-[9/16] bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Cashcow 2.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Cashcow</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Cashcow Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motivation Videos -->
+                <div class="work-item group" data-category="promo">
+                    <div class="aspect-[9/16] bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Motivational Video 1.mov">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Motivational</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Motivation Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item group" data-category="promo">
+                    <div class="aspect-video bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Motivational Video 2.mov">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Motivational</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Motivation Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item group" data-category="promo">
+                    <div class="aspect-[9/16] bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Motivational Video 3.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Motivational</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Motivation Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Educational Videos - Existing -->
+                <div class="work-item group" data-category="client">
+                    <div class="aspect-video bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Educational.mov">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Education</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Educational Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Educational Video: Explanatory video.mp4 - Landscape -->
+                <div class="work-item group" data-category="client">
+                    <div class="aspect-video bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Explanatory video.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Education</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Educational Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Promo Videos (Existing) -->
+                <div class="work-item group" data-category="promo">
+                    <div class="aspect-video bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Event promo.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Event</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Event Promo Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="work-item group" data-category="promo">
+                    <div class="aspect-video bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/Event promo 2.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Event</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Event Promo Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- New Event Promo Video: event.mp4 - Square (4:4) -->
+                <div class="work-item group" data-category="promo">
+                    <div class="aspect-square bg-neutral/5 rounded-3xl overflow-hidden relative cursor-pointer video-container">
+                        <video loop muted playsinline autoplay preload="auto" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110">
+                            <source src="Videos/event.mp4" type="video/mp4">
+                        </video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-8 translate-y-4 group-hover:translate-y-0 pointer-events-none">
+                            <span class="text-[10px] uppercase tracking-[0.3em] text-neutral mb-2">Event</span>
+                            <h4 class="text-2xl font-bold text-text tracking-tight">Event Promo Video</h4>
+                            <div class="flex items-center mt-2 text-xs text-neutral">
+                                <i class="fas fa-volume-mute mr-2"></i> Click to unmute & enlarge
+                            </div>
+                        </div>
+                        <div class="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-expand text-white"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="px-6 md:px-24 py-40 flex flex-col items-center text-center border-t border-neutral/10">
+            <!-- Contact Profile Picture with White Glow -->
+            <div class="flex items-center space-x-4 mb-12">
+                <div class="profile-glow profile-glow-sm w-16 h-16 rounded-full">
+                    <div class="profile-glow-inner w-full h-full">
+                        <img src="image.png" alt="Thamara Perera" class="w-full h-full object-cover">
+                    </div>
+                </div>
+                <div class="text-left">
+                    <h3 class="text-text text-2xl font-bold">Ready to work together?</h3>
+                    <p class="text-neutral text-sm">Let's create something amazing</p>
+                </div>
+            </div>
+            
+            <h2 class="text-sm uppercase tracking-[0.3em] text-neutral mb-8">Get in touch</h2>
+            <a href="mailto:theheavless@gmail.com" class="text-4xl md:text-7xl font-bold text-text hover:text-neutralLight transition-colors tracking-tighter mb-12">
+                LET'S EDIT.
+            </a>
+            
+            <!-- Contact Info Box -->
+            <div class="mt-12 w-full max-w-4xl border border-neutral/10 rounded-3xl p-8 md:p-12 bg-black/20 backdrop-blur-sm">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Instagram -->
+                    <a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.instagram.com%2Ftheheaviess%3Ffbclid%3DIwZXh0bgNhZW0CMTAAAR7MzmncV5LtPHoWo4akuuTyJUNYNGCXIKTU0ptN3Mj_NhOT7UaLE-EPm2ISVg_aem_zDtCAub80hUtkrImY-6m8Q&h=AT03FvoOsZafoZoR29c-1v2JNRcMPrGXOEid0fP4_MnYt2a2tmPXOc7OjywA3bdZGjGtFoC24D5Aw6S4wZ6RrylbZWb-MOT8i54bE-bB_6nlUziClgqdfXbimwGVoT9SBs_B-REkL-umilP71v_G" target="_blank" class="group flex flex-col items-center p-6 hover:bg-neutral/5 rounded-2xl transition-all border border-neutral/5 hover:border-accentBlue/30">
+                        <div class="w-16 h-16 rounded-full bg-accentBlue/10 flex items-center justify-center mb-4 group-hover:bg-accentBlue/20 transition-colors">
+                            <i class="fab fa-instagram text-neutral group-hover:text-text text-2xl"></i>
+                        </div>
+                        <div class="text-center">
+                            <span class="block text-neutral text-xs uppercase tracking-widest mb-1 group-hover:text-text transition-colors">INSTAGRAM</span>
+                            <span class="text-text font-medium">@theheavless</span>
+                        </div>
+                    </a>
+                    
+                    <!-- TikTok (Coming Soon) -->
+                    <div class="group flex flex-col items-center p-6 rounded-2xl transition-all border border-neutral/5 cursor-not-allowed relative">
+                        <div class="w-16 h-16 rounded-full bg-neutral/10 flex items-center justify-center mb-4">
+                            <i class="fab fa-tiktok text-neutral text-2xl"></i>
+                        </div>
+                        <div class="text-center">
+                            <span class="block text-neutral text-xs uppercase tracking-widest mb-1">TIKTOK</span>
+                            <span class="text-text font-medium">Coming Soon</span>
+                        </div>
+                        <div class="absolute -top-2 -right-2 bg-accentRed text-text text-xs px-2 py-1 rounded-full">
+                            Soon
+                        </div>
+                    </div>
+                    
+                    <!-- LinkedIn -->
+                    <a href="https://www.linkedin.com/in/the-heavies-aa46493a7" target="_blank" class="group flex flex-col items-center p-6 hover:bg-neutral/5 rounded-2xl transition-all border border-neutral/5 hover:border-accentBlue/30">
+                        <div class="w-16 h-16 rounded-full bg-accentBlue/10 flex items-center justify-center mb-4 group-hover:bg-accentBlue/20 transition-colors">
+                            <i class="fab fa-linkedin-in text-neutral group-hover:text-text text-2xl"></i>
+                        </div>
+                        <div class="text-center">
+                            <span class="block text-neutral text-xs uppercase tracking-widest mb-1 group-hover:text-text transition-colors">LINKED IN</span>
+                            <span class="text-text font-medium">The Heavies</span>
+                        </div>
+                    </a>
+                    
+                    <!-- Facebook -->
+                    <a href="https://web.facebook.com/profile.php?id=61586699740447" target="_blank" class="group flex flex-col items-center p-6 hover:bg-neutral/5 rounded-2xl transition-all border border-neutral/5 hover:border-accentBlue/30">
+                        <div class="w-16 h-16 rounded-full bg-accentBlue/10 flex items-center justify-center mb-4 group-hover:bg-accentBlue/20 transition-colors">
+                            <i class="fab fa-facebook-f text-neutral group-hover:text-text text-2xl"></i>
+                        </div>
+                        <div class="text-center">
+                            <span class="block text-neutral text-xs uppercase tracking-widest mb-1 group-hover:text-text transition-colors">FACEBOOK</span>
+                            <span class="text-text font-medium">The Heavies</span>
+                        </div>
+                    </a>
+                    
+                    <!-- Email -->
+                    <div class="md:col-span-3 mt-4 pt-8 border-t border-neutral/10">
+                        <a href="mailto:theheavless@gmail.com" class="group flex items-center justify-center space-x-6 p-8 bg-accentBlue/5 hover:bg-accentBlue/10 rounded-2xl transition-all border-2 border-accentBlue/20 hover:border-accentBlue/40">
+                            <div class="w-20 h-20 rounded-full bg-accentBlue/10 flex items-center justify-center group-hover:bg-accentBlue/20 transition-colors">
+                                <i class="fas fa-envelope text-neutral group-hover:text-text text-3xl"></i>
+                            </div>
+                            <div class="text-center md:text-left">
+                                <span class="block text-neutral text-xs uppercase tracking-widest mb-2 group-hover:text-text transition-colors">EMAIL</span>
+                                <span class="text-text font-medium text-2xl">theheavless@gmail.com</span>
+                                <p class="text-neutral text-sm mt-2 max-w-md">Send me an email to discuss your next video project or collaboration</p>
+                            </div>
+                            <div class="hidden md:block">
+                                <i class="fas fa-arrow-right text-neutral group-hover:text-text text-xl transition-transform group-hover:translate-x-2"></i>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-20 pt-12 border-t border-neutral/10 w-full max-w-2xl">
+                <h3 class="text-xl font-bold text-text mb-6">Ready to Create Something Amazing?</h3>
+                <p class="text-neutral mb-8 max-w-xl mx-auto">Let's discuss your next video project. I'm available for freelance work and long-term collaborations.</p>
+                <a href="mailto:theheavless@gmail.com?subject=Video Editing Project&body=Hi Thamara,%0D%0A%0D%0AI'd like to discuss a video editing project with you." class="bg-text text-background px-10 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:scale-105 transition-transform hover:bg-neutralLight inline-block">
+                    Start a Project
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="p-10 border-t border-neutral/10 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-widest text-neutral">
+        <p>&copy; <span id="current-year"></span> Thamara Perera. All rights reserved.</p>
+        <div class="flex items-center space-x-4 mt-4 md:mt-0">
+            <!-- Footer Profile Picture with White Glow -->
+            <div class="profile-glow profile-glow-sm w-6 h-6 rounded-full">
+                <div class="profile-glow-inner w-full h-full">
+                    <img src="image.png" alt="TP" class="w-full h-full object-cover">
+                </div>
+            </div>
+            <p>Built with <i class="fas fa-heart text-accentRed mx-1"></i> and Passion</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
